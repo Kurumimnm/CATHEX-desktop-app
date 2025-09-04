@@ -1,5 +1,5 @@
 import path from "node:path";
-import { BrowserWindow, app } from "electron";
+import { BrowserWindow, app, ipcMain } from "electron";
 
 app.whenReady().then(() => {
     // アプリの起動イベント発火で BrowserWindow インスタンスを作成
@@ -12,6 +12,8 @@ app.whenReady().then(() => {
 
     // レンダラープロセスをロード
     mainWindow.loadFile(path.join(__dirname, "index.html"));
+    // 起動時にデベロッパーツールを別ウィンドウで表示する
+    mainWindow.webContents.openDevTools({ mode: "detach" });
 });
 
 // すべてのウィンドウが閉じられたらアプリを終了する

@@ -1,8 +1,10 @@
 /** エディタで補完を効かせるために型定義をインポート */
 import type { Configuration } from "webpack";
+import type { Configuration as DevServerConfiguration } from "webpack-dev-server";
 
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const path = require("path");
 
 // 開発者モードか否かで処理を分岐する
 const isDev = process.env.NODE_ENV === "development";
@@ -71,6 +73,7 @@ const common: Configuration = {
 const main: Configuration = {
     // 共通設定を読み込み
     ...common,
+    name: "main",
     target: "electron-main",
     // エントリーファイル（チャンク名の "main.js" として出力される）
     entry: {
@@ -81,6 +84,7 @@ const main: Configuration = {
 // プリロードスクリプト向け設定
 const preload: Configuration = {
     ...common,
+    name: "preload",
     target: "electron-preload",
     entry: {
         preload: "./src/preload.ts",
@@ -88,13 +92,24 @@ const preload: Configuration = {
 };
 
 // レンダラープロセス向け設定
-const renderer: Configuration = {
+const renderer: Configuration & { devServer?: DevServerConfiguration } = {
     ...common,
+    name: "renderer",
     // セキュリティ対策として "electron-renderer" ターゲットは使用しない
     target: "web",
     entry: {
         // React アプリのエントリーファイル
         app: "./src/web/index.tsx",
+    },
+    devServer: {
+        static: {
+            directory: path.resolve(__dirname, "dist"),
+        },
+        port: 5173,
+        open: true,
+        hot: true,
+        compress: true,
+        historyApiFallback: true,
     },
     plugins: [
         // CSS を JS へバンドルせず別ファイルとして出力するプラグイン

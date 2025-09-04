@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8" />
     <!-- CSP の設定 https://developer.mozilla.org/ja/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self';" />
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; connect-src 'self' ws://localhost:8765; img-src 'self' blob:;" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Electron App</title>
 </head>
